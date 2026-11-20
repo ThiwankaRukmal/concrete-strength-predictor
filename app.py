@@ -1,9 +1,18 @@
 import streamlit as st
-import joblib
+import pandas as pd
+from sklearn.ensemble import RandomForestRegressor
 import numpy as np
 
-# Save කළ AI Model එක Load කිරීම
-model = joblib.load('concrete_model.pkl')
+@st.cache_resource
+def train_model():
+    df = pd.read_csv('Concrete Compressive Strength.csv').dropna()
+    X = df.iloc[:, :8]
+    y = df.iloc[:, 8]
+    model = RandomForestRegressor(n_estimators=100, random_state=42)
+    model.fit(X, y)
+    return model
+
+model = train_model()
 
 st.title("🧱 Concrete Compressive Strength Predictor")
 st.write("අමුද්‍රව්‍ය අනුපාත ඇතුළත් කර කොන්ක්‍රීට් මිශ්‍රණයේ සම්පීඩන ශක්තිය (MPa) කලින් අනුමාන කරන්න.")
